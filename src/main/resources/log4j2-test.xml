@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <File name="melefile" fileName="melegames.log" append="false">
+      <PatternLayout pattern="%t %-5p %c{4} - %m%n"/>
+    </File>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d %-5p [%t] %C{4} (%F:%L) - %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.mele.games" level="debug">
+      <AppenderRef ref="melefile"/>
+    </Logger>
+    <Root level="debug">
+      <AppenderRef ref="STDOUT"/>
+      <AppenderRef ref="melefile"/>
+    </Root>
+  </Loggers>
+</Configuration>
