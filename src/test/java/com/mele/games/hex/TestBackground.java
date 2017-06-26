@@ -8,7 +8,7 @@ public class TestBackground implements IHexRenderable {
 
 	public TestBackground () {
 		SpriteFactoryDescriptor sd = new SpriteFactoryDescriptor();
-		sd.addImageFrames("/Boulder.png", 1, 0);
+		sd.addImageFrames("/com/mele/hexrender/Boulder.png", 1, 0);
 		SpriteFactory.registerSprite(getSpriteTag(), sd);		
 	}
 	

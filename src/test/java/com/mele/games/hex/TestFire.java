@@ -9,10 +9,10 @@ public class TestFire implements IHexRenderable, IHexResident {
 
 	public TestFire() {
 		SpriteFactoryDescriptor sd = new SpriteFactoryDescriptor();
-		sd.addImageFrames("/Fire_0.png", 2, 0);
-		sd.addImageFrames("/Fire_1.png", 2, 0);
-		sd.addImageFrames("/Fire_2.png", 2, 0);
-		sd.addImageFrames("/Fire_1.png", 2, 0);
+		sd.addImageFrames("/com/mele/hexrender/Fire_0.png", 2, 0);
+		sd.addImageFrames("/com/mele/hexrender/Fire_1.png", 2, 0);
+		sd.addImageFrames("/com/mele/hexrender/Fire_2.png", 2, 0);
+		sd.addImageFrames("/com/mele/hexrender/Fire_1.png", 2, 0);
 		
 		SpriteFactory.registerSprite(getSpriteTag(), sd);
 	}

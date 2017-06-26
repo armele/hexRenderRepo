@@ -9,7 +9,7 @@ public class TestFence implements IHexRenderable, IHexResident {
 
 	public TestFence() {
 		SpriteFactoryDescriptor sd = new SpriteFactoryDescriptor();
-		sd.addImageFrames("/Fence.png", 1, 0);
+		sd.addImageFrames("/com/mele/hexrender/Fence.png", 1, 0);
 		SpriteFactory.registerSprite(getSpriteTag(), sd);
 	}
 	
