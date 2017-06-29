@@ -27,6 +27,14 @@
 					<exclude>**/*.jbf</exclude>
 				</excludes>
 			</resource>
+			<resource>
+				<targetPath></targetPath>
+				<filtering>false</filtering>
+				<directory>${basedir}/src/main/resources</directory>
+				<includes>
+					<include>log4j2-test.xml</include>
+				</includes>
+			</resource>			
 		</resources>
 		<plugins>
 			<plugin>
