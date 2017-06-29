@@ -1,24 +1,28 @@
 package com.mele.games.hex;
 
-import junit.framework.Assert;
-
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.junit.Test;
 
-import com.mele.games.hex.EHexVector;
-import com.mele.games.hex.HexArray;
-import com.mele.games.hex.HexCell;
 import com.mele.games.hex.ui.CellRenderer;
+import com.mele.games.hex.ui.HexArray;
+import com.mele.games.hex.ui.HexArrayController;
+import com.mele.games.hex.ui.HexCell;
+
+import junit.framework.Assert;
 
 public class HexArray_Tests {
 	
 	@Test
 	public void testMapCreation() {
-		HexArray map = new HexArray(4, 5);
+		HexArrayController hac = new HexArrayController(null);
+		hac.size(4, 5);
+		
+		HexArray map = hac.getModel();
 		
 		Assert.assertEquals(20, map.size());
 		
@@ -100,36 +104,11 @@ public class HexArray_Tests {
 	}	
 	
 	@Test
-	public void testDiagonal() {
-		HexArray map = new HexArray(6, 6);
-		HexCell test = map.getCellAt(0, 0);
-		
-		Assert.assertEquals(0, test.getDiagonal());
-		
-		test = map.getCellAt(0, 1);
-		
-		Assert.assertEquals(1, test.getDiagonal());
-		
-		test = map.getCellAt(0, 2);
-		
-		Assert.assertEquals(2, test.getDiagonal());		
-		
-		test = map.getCellAt(1, 0);
-		
-		Assert.assertEquals(1, test.getDiagonal());	
-		
-		test = map.getCellAt(1, 1);
-		
-		Assert.assertEquals(2, test.getDiagonal());	
-		
-		test = map.getCellAt(2, 1);
-		
-		Assert.assertEquals(2, test.getDiagonal());				
-	}
-	
-	@Test
 	public void testMapNavigation() {
-		HexArray map = new HexArray(6, 6);
+		HexArrayController hac = new HexArrayController(null);
+		hac.size(6, 6);
+		
+		HexArray map = hac.getModel();
 		
 		Assert.assertEquals(36, map.size());
 		
@@ -216,7 +195,7 @@ public class HexArray_Tests {
 	public void showRenderer() {
 		int passcount = 0;
 		TestFrame tf = new TestFrame();
-		tf.hexControl.resize(5, 6);
+		tf.hexControl.size(5, 6);
 		HexArray hexmap = tf.hexControl.getModel();
 		hexmap.getCellAt(1, 1).addResident(new TestFence());
 		hexmap.getCellAt(1, 1).addResident(new TestFire());
@@ -251,7 +230,7 @@ public class HexArray_Tests {
 	public void testAutoscaling() {
 		int passcount = 0;
 		TestFrame tf = new TestFrame();
-		tf.hexControl.resize(5, 6);
+		tf.hexControl.size(5, 6);
 		tf.hexControl.setAutoscale(true);
 		
 		HexArray hexmap = tf.hexControl.getModel();
@@ -279,7 +258,7 @@ public class HexArray_Tests {
 					tf.setBounds(rect);
 				}
 				if (passcount == 15) {
-					Assert.assertEquals(28, tf.hexControl.getView().getCellSize());
+					Assert.assertEquals(25, tf.hexControl.getView().getCellSize());
 				}
 				if (passcount == 20) {
 					Rectangle rect = tf.getBounds();
@@ -287,7 +266,7 @@ public class HexArray_Tests {
 					tf.setBounds(rect);
 				}
 				if (passcount == 25) {
-					Assert.assertEquals(58, tf.hexControl.getView().getCellSize());
+					Assert.assertEquals(52, tf.hexControl.getView().getCellSize());
 				}				
 				if (passcount > 100) {
 					tf.dispatchEvent(new WindowEvent(tf, WindowEvent.WINDOW_CLOSING));
@@ -302,7 +281,7 @@ public class HexArray_Tests {
 	@Test
 	public void testVisualMap() {
 		TestFrame tf = new TestFrame();
-		tf.hexControl.resize(5, 6);
+		tf.hexControl.size(5, 6);
 		tf.hexControl.setAutoscale(true);
 		
 		HexArray hexmap = tf.hexControl.getModel();
@@ -325,5 +304,36 @@ public class HexArray_Tests {
 			Assert.assertNotNull(visualMap.get(p));
 		}
 
+	}	
+	
+	@Test
+	public void testSelectedCells() {
+		TestFrame tf = new TestFrame();
+		tf.hexControl.size(5, 6);
+		tf.hexControl.setAutoscale(true);
+		
+		CellRenderer crend = tf.hexControl.getCellAt(1, 1);
+		crend.setSelected(true);
+		
+		crend = tf.hexControl.getCellAt(3, 2);
+		crend.setSelected(true);		
+		
+		ArrayList<CellRenderer> sList = (ArrayList<CellRenderer>) tf.hexControl.selectedCells();
+		
+		Assert.assertEquals(2, sList.size());
+		
+		boolean found1 = false;
+		boolean found2 = false;
+		
+		for (CellRenderer cr : sList) {
+			if (cr.getCell().getX() == 1 && cr.getCell().getY() == 1) {
+				found1 = true;
+			}
+			if (cr.getCell().getX() == 3 && cr.getCell().getY() == 2) {
+				found2 = true;
+			}			
+		}
+		
+		Assert.assertEquals(true, found1 && found2);
 	}		
 }

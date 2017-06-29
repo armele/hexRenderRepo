@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
-import com.mele.games.hex.HexArray;
 import com.mele.games.hex.IHexEventListener;
 import com.mele.games.hex.TestFence;
 import com.mele.games.hex.TestFire;
@@ -23,7 +22,7 @@ public class Manual_Test {
 	@Test
 	public void manualTest() {
 		TestFrame tf = new TestFrame();
-		tf.hexControl.resize(5, 6);
+		tf.hexControl.size(5, 6);
 		tf.hexControl.setAutoscale(true);
 		HexArray hexmap = tf.hexControl.getModel();
 		hexmap.getCellAt(1, 1).addResident(new TestFence());
@@ -63,18 +62,14 @@ public class Manual_Test {
 		protected boolean keepDefault = true;
 		
 		@Override
-		public void cellEvent(HexEventDetail eventDetail) {
+		public boolean cellEvent(HexEventDetail eventDetail) {
 			detail.add(eventDetail);
 			log.info(eventDetail);
+			return true;
 		}
 		
 		public HexEventDetail getHexEventDetail(int index)  {
 			return detail.get(index);
-		}
-
-		@Override
-		public boolean keepDefaultBehavior() {
-			return keepDefault;
 		}
 	}
 	
@@ -83,7 +78,7 @@ public class Manual_Test {
 	public void listenerTest() {
 		TestEventListener evListener = new TestEventListener();
 		TestFrame tf = new TestFrame();
-		tf.hexControl.resize(5, 6);
+		tf.hexControl.size(5, 6);
 		tf.hexControl.setAutoscale(true);
 		tf.hexControl.registerHexEventListener(evListener);
 		

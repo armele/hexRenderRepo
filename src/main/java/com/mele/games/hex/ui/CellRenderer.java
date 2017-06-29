@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import com.mele.games.animation.ERenderPass;
 import com.mele.games.animation.Sprite;
 import com.mele.games.animation.SpriteFactory;
-import com.mele.games.hex.HexCell;
 import com.mele.games.hex.IHexResident;
 
 /**
@@ -33,6 +32,8 @@ public class CellRenderer {
 	protected boolean hovered = false;
 	protected boolean rendered = false;
 	
+	// TODO: Allow client-created renderers which can override this functionality.
+	
 	/**
 	 * @param viewRender
 	 * @param modelCell
@@ -40,6 +41,10 @@ public class CellRenderer {
 	public CellRenderer(HexArrayRenderer viewRender, HexCell modelCell) {
 		this.cell = modelCell;
 		this.renderer = viewRender;
+		
+		if (cell != null) {
+			cell.setRenderer(this);
+		}
 	}
 
 	/**
@@ -54,6 +59,10 @@ public class CellRenderer {
 	 */
 	public void setCell(HexCell cell) {
 		this.cell = cell;
+		
+		if (cell != null) {
+			cell.setRenderer(this);
+		}
 	}
 	
 	/**
@@ -162,6 +171,7 @@ public class CellRenderer {
 	 */
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+		log.debug("Diagonal: " + cell.getDiagonal() + " " + toString());
 	}
 
 	/**

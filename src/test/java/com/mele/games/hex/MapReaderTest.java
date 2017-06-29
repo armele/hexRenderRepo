@@ -2,8 +2,8 @@ package com.mele.games.hex;
 
 import org.junit.Test;
 
-import com.mele.games.hex.HexArray;
-import com.mele.games.hex.MapReader;
+import com.mele.games.hex.ui.HexArray;
+import com.mele.games.hex.ui.MapReader;
 
 import junit.framework.Assert;
 

@@ -14,7 +14,7 @@ public class DefaultHexListener implements IHexEventListener {
 	}
 	
 	@Override
-	public void cellEvent(HexEventDetail eventDetail) {
+	public boolean cellEvent(HexEventDetail eventDetail) {
 		CellRenderer location = eventDetail.getEventLocation();
 		
 		if (location != null) {
@@ -44,18 +44,8 @@ public class DefaultHexListener implements IHexEventListener {
 			}
 
 		}
-	}
 	
-	/* (non-Javadoc)
-	 * @see com.mele.games.hex.IHexEventListener#keepDefaultBehavior()
-	 * 
-	 * Perhaps it seems unintuitive to have the setting "keepDefaultBehavior" false in a class called DefaultHexListener -
-	 * but it makse sense! (Really!)  This class is providing the default behavior, and if this setting were "true" there
-	 * would be a double-echo if no user listener is set.
-	 * 
-	 */
-	@Override
-	public boolean keepDefaultBehavior() {
+		// This class implements the default behavior; there is no further default behavior to be triggered.
 		return false;
 	}
 

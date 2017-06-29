@@ -1,16 +1,23 @@
 package com.mele.games.hex.ui;
 
+import java.awt.Insets;
 import java.awt.Window;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mele.games.hex.HexArray;
 import com.mele.games.hex.IHexEventListener;
+import com.mele.games.hex.IHexResident;
 
 /**
  * Responsible for synchronizing the state between the Model (HexArray) and View (HexArrayRenderer)
  * 
+ * @author Al Mele
+ *
+ */
+/**
  * @author Al Mele
  *
  */
@@ -21,20 +28,22 @@ public class HexArrayController {
 	protected HexArrayRenderer view = new HexArrayRenderer();
 	protected HexInputListener input = new HexInputListener(this);
 	protected CellRenderer currentCell = null;
-	protected boolean snap = true;
 	
 	protected IHexEventListener heListener = null;
 	protected DefaultHexListener defaultListener = new DefaultHexListener(this);
 	
 	/**
-	 * @param parentWin
+	 * @param parentWin - Provide the parent window into which the hex rendering will be done.
 	 */
 	public HexArrayController(Window parentWin) {
-		parentWin.addMouseListener(input);	
-		parentWin.addComponentListener(input);
-		parentWin.addMouseMotionListener(input);
+		if (parentWin != null) {
+			parentWin.addMouseListener(input);	
+			parentWin.addComponentListener(input);
+			parentWin.addMouseMotionListener(input);
+		}
 		view.setParentWindow(parentWin);
 		view.setController(this);
+		init();
 	}
 
 	/**
@@ -42,13 +51,6 @@ public class HexArrayController {
 	 */
 	public HexArray getModel() {
 		return model;
-	}
-
-	/**
-	 * @param model the model to set
-	 */
-	public void setModel(HexArray model) {
-		this.model = model;
 	}
 
 	/**
@@ -61,65 +63,67 @@ public class HexArrayController {
 	/**
 	 * @param view the view to set
 	 */
-	public void setView(HexArrayRenderer view) {
+	protected void setView(HexArrayRenderer view) {
 		this.view = view;
 	}
 	
 	/**
 	 * Initializes the view (hex array renderer) to the underlying game state (model).
 	 */
-	public void init() {
+	protected void init() {
 		view.init(model);
 	}
 	
 	/**
-	 * Resizes the game board (retaining pieces that exist in both areas)
+	 * Sizes the number of hexes in the game board.
+	 * If resizing, this operation retains content in hexes which exist
+	 * both in the old and new size matrix. 
+	 * 
+	 * For example, in a 3x3 board that is resized to 4x4,
+	 * all of the original 9 hexes would retain any type
+	 * and resident information they had been set up with.
 	 * 
 	 * @param newXSize
 	 * @param newYSize
 	 */
-	public void resize(int newXSize, int newYSize) {
+	public void size(int newXSize, int newYSize) {
 		model.resize(newXSize, newYSize);
 		init();
 	}
 	
+	/**
+	 * Indicates whether or not the size of the hexes will automatically
+	 * be adjusted to fit the space available for the game board.
+	 * 
+	 * Default = true
+	 * 
+	 * @return
+	 */
 	public boolean isAutoscale() {
 		return view.isAutoscale();
 	}
 	
 	/**
-	 * @param auto
+	 * Configure the autoscaling setting.
+	 * 
+	 * @param auto Set to <code>true</code> if you would like the hex library to automatically scale the cell size
+	 * to the maximum available window space.  Otherwise, false.
 	 */
 	public void setAutoscale(boolean auto) {
 		view.setAutoscale(auto);
-	}
-
-	/**
-	 * @return whether or not the parent window will be automatically resized to fit the hex map
-	 */
-	public boolean isSnap() {
-		return snap;
-	}
-
-	/**
-	 * @param snap "true" if the parent window will be automatically resized to fit the hex map, otherwise "false"
-	 * TODO: Implement this functionality.
-	 */
-	public void setSnap(boolean snap) {
-		this.snap = snap;
 	}
 	
 	/**
 	 * Called by the view prior to rendering.
 	 */
-	public void onPrePaint() {
+	protected void onPrePaint() {
 		
 	}
 	
 	/**
 	 * Called by the view subsequent to rendering
 	 */
-	public void onPostPaint() {
+	protected void onPostPaint() {
 
 	}
 	
@@ -133,22 +137,31 @@ public class HexArrayController {
 			}
 		}
 	}
+	
 
 	/**
-	 * @return the currentCell
+	 * @return a list of CellRenderer objects corresponding to selected cells.
 	 */
-	public CellRenderer getCurrentCell() {
-		return currentCell;
-	}
-
-	/**
-	 * @param currentCell the currentCell to set
-	 */
-	public void setCurrentCell(CellRenderer currentCell) {
-		this.currentCell = currentCell;
-	}
+	public List <CellRenderer> selectedCells() {
+		ArrayList<CellRenderer> sList = new ArrayList<CellRenderer>();
+		
+		if (view != null && view.getVisualMap() != null) {
+			for (CellRenderer cr : view.getVisualMap().values()) {
+				if (cr.isSelected()) {
+					sList.add(cr);
+				}
+			}
+		}
+		
+		return sList;
+	}	
 	
 	/**
+	 * Register a listener of your implementation which will receive all mouse and game events provided
+	 * by the hexRender library.  
+	 * 
+	 * If no listener is registered, the default listener <code>DefaultHexListener</code> will be used.
+	 * 
 	 * @param listener
 	 */
 	public void registerHexEventListener(IHexEventListener listener) {
@@ -175,7 +188,54 @@ public class HexArrayController {
 	 * 
 	 * @return
 	 */
-	public IHexEventListener getHexDefaultListener() {
+	protected IHexEventListener getHexDefaultListener() {
 			return defaultListener;
+	}	
+	
+	/**
+	 * Make the borders of the parent window fit the area into which the hex map has been drawn.
+	 */
+	public void snap() {
+		Window parentWin = view.getParentWindow();
+		Insets border = parentWin.getInsets();
+		parentWin.setSize((int)view.getMaxX() + border.left + border.right, (int)view.getMaxY() + border.top + border.bottom);		
+	}
+	
+	/**
+	 * @param x the X coordinate on the HexMap of the renderer to return.
+	 * @param y the Y coordinate on the HexMap of the renderer to return.
+	 * @return the CellRenderer for the cell at the specified location.
+	 */
+	public CellRenderer getCellAt(int x, int y) {
+		CellRenderer cRend = null;
+		
+		if (model != null) {
+			HexCell cell = model.getCellAt(x, y);
+			
+			if (cell != null) {
+				cRend = cell.getRenderer();
+			}
+		}
+		
+		return cRend;
+	}
+	
+
+	/**
+	 * Add a resident at the specified point
+	 * 
+	 * @param resident
+	 * @param x
+	 * @param y
+	 * @return <code>true</code> if the resident was added successfully, otherwise false
+	 */
+	public boolean addResident(IHexResident resident, int x, int y) {
+		boolean added = false;
+		HexCell cell = model.getCellAt(x, y);
+		if (cell != null) {
+			cell.addResident(resident);
+			added = true;
+		}
+		return added;
 	}	
 }

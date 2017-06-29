@@ -1,4 +1,4 @@
-package com.mele.games.hex;
+package com.mele.games.hex.ui;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mele.games.hex.EHexVector;
+import com.mele.games.hex.IHexResident;
 
 /**
  * This implementation of an array uses a 2-dimensional array to represent a grid of
@@ -42,10 +45,16 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 	/**
 	 * Default constructor - starts with an empty map (no cells)
 	 */
-	public HexArray() {
+	protected HexArray() {
 	}
 	
-	public HexArray(int columns, int rows) {
+	/**
+	 * Construct a map with the specified number of columns and rows.
+	 * 
+	 * @param columns
+	 * @param rows
+	 */
+	protected HexArray(int columns, int rows) {
 		cellMap = create(columns, rows);
 	}
 	
@@ -73,7 +82,7 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 	 * @param resident
 	 * @param point
 	 */
-	public void put(IHexResident resident, int x, int y) {
+	protected void put(IHexResident resident, int x, int y) {
 		HexCell cell = cellMap[x][y];
 		cell.addResident(resident);
 	}
@@ -84,7 +93,7 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 	 * @param columns
 	 * @param rows
 	 */
-	public HexCell[][] create(int columns, int rows) {
+	protected HexCell[][] create(int columns, int rows) {
 		log.debug("Creating hex array with " + columns +" columns and " + rows + " rows.");
 	
 		HexCell[][] newMap = new HexCell[columns][rows];
@@ -108,7 +117,7 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 	 * @param x
 	 * @param y
 	 */
-	public void resize(int newXSize, int newYSize) {
+	protected void resize(int newXSize, int newYSize) {
 		HexCell[][] temp = create(newXSize, newYSize);
 		
 		// Map is created using cartesian coordinates.
@@ -127,17 +136,18 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 		cellMap = temp;
 	}
 	
+	/**
+	 * @return the total number of cells in the map.
+	 */
 	public int size() {
 		return getRows() * getColumns();
 	}
 	
 	/**
 	 * The number of cells in each column of the hex map.
-	 * As written, assumes all columns have the same number of
-	 * rows. (Does not support circular maps.
 	 */	
 	public int getRows() {
-		int rows = -1;
+		int rows = 0;
 		
 		if ((cellMap != null) && (cellMap.length > 0)) {
 			rows = cellMap[0].length;
@@ -150,7 +160,12 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 	 * The number of columns in the hex map
 	 */
 	public int getColumns() {
-		int columns = cellMap.length;
+		int columns = 0;
+		
+		if (cellMap != null) {
+			columns = cellMap.length;
+		}
+		
 		return columns;
 	}
 	
@@ -203,9 +218,11 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 	 */
 	public Iterator<HexCell> iterator() {
 		ArrayList<HexCell> cellList = new ArrayList<HexCell>();
-		for (HexCell[] column : cellMap) {
-			for (HexCell cell : column) {
-				cellList.add(cell);
+		if (cellMap != null) {
+			for (HexCell[] column : cellMap) {
+				for (HexCell cell : column) {
+					cellList.add(cell);
+				}
 			}
 		}
 		return cellList.iterator();

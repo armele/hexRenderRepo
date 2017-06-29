@@ -15,8 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.mele.games.animation.ERenderPass;
 import com.mele.games.animation.Sprite;
-import com.mele.games.hex.HexArray;
-import com.mele.games.hex.HexCell;
 import com.mele.games.utils.GameException;
 
 
@@ -54,7 +52,7 @@ public class HexArrayRenderer {
 	 * When autoscale is "true", the cell size is derived from the window space.
 	 * When autoscale is "false", the cell size is used as set.
 	 */
-	protected boolean autoscale; 
+	protected boolean autoscale = true; 
 	
 	protected Color selectionColor = Color.white;
 	protected Color lineColor = Color.black;
@@ -65,11 +63,11 @@ public class HexArrayRenderer {
 	 */
 	protected Image canvas = null;
 	
-	public HexArrayRenderer () {
+	protected HexArrayRenderer () {
 		
 	}
 	
-	public HexArrayRenderer (Window parentWin) {
+	protected HexArrayRenderer (Window parentWin) {
 		setParentWindow(parentWindow);
 	}
 	
@@ -113,7 +111,11 @@ public class HexArrayRenderer {
 	/**
 	 * Create the polygons necessary for illustrating the board.
 	 */
-	public void init(HexArray hexmap) {
+	protected void init(HexArray hexmap) {
+		if (parentWindow == null) {
+			return;
+		}
+		
 		if (visualMap != null) {
 			visualMap.clear();
 		}
@@ -125,7 +127,7 @@ public class HexArrayRenderer {
 		minX = 0;
 		minY = 0;
 		
-		if (autoscale) {
+		if (autoscale && parentWindow.getWidth() > 0 && parentWindow.getHeight() > 0) {
 			cellSize = calcMaxCellSize(offsetX, offsetY, parentWindow.getWidth(), parentWindow.getHeight(), hexmap.getColumns(), hexmap.getRows());
 		}
 		
@@ -200,7 +202,7 @@ public class HexArrayRenderer {
 	 * @param pass
 	 * @param g
 	 */
-	public void drawHexArray(ERenderPass pass, Graphics g) {
+	protected void drawHexArray(ERenderPass pass, Graphics g) {
 		Color save = g.getColor();
 		
 		canvas = parentWindow.createImage((int)maxX+1, (int)maxY+1);
@@ -340,14 +342,14 @@ public class HexArrayRenderer {
 	/**
 	 * @return the parentWindow
 	 */
-	public Window getParentWindow() {
+	protected Window getParentWindow() {
 		return parentWindow;
 	}
 
 	/**
 	 * @param parentWindow the parentWindow to set
 	 */
-	public void setParentWindow(Window parentWin) {
+	protected void setParentWindow(Window parentWin) {
 		this.parentWindow = parentWin;
 	}
 
@@ -382,12 +384,12 @@ public class HexArrayRenderer {
 	/**
 	 * @param controller the controller to set
 	 */
-	public void setController(HexArrayController controller) {
+	protected void setController(HexArrayController controller) {
 		this.controller = controller;
 	}
 	
 	/**
-	 * @return
+	 * @return a map of all sprites associated with a renderable object.
 	 */
 	public HashMap<IHexRenderable, Sprite> getSpriteMap() {
 		return spriteMap;
@@ -403,7 +405,7 @@ public class HexArrayRenderer {
 	/**
 	 * @param visualMap the visualMap to set
 	 */
-	public void setVisualMap(Map<Polygon, CellRenderer> visualMap) {
+	protected void setVisualMap(Map<Polygon, CellRenderer> visualMap) {
 		this.visualMap = visualMap;
 	}
 	

@@ -1,16 +1,18 @@
-package com.mele.games.hex;
+package com.mele.games.hex.ui;
 
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mele.games.hex.ui.IHexRenderable;
+import com.mele.games.hex.EHexVector;
+import com.mele.games.hex.ICellType;
+import com.mele.games.hex.IHexResident;
 
 /**
  * Represents one cell in a hex array.  For example,
  * in the hex array represented below, C2 would be one
- * cell.
+ * cell, at location 2, 1 (Zero-based)
  * 
  *   A   B   C   D   E
  *  [A1]	[C1]    [E1]
@@ -19,10 +21,7 @@ import com.mele.games.hex.ui.IHexRenderable;
  *      [B2]    [D2]
  *  [A3]    [C3]    [E3]
  *  
- *  The "diagonal" describes the cell along the left side of
- *  the hex arrangement in which the target cell resides.
- *  For example [C2] is on the same diagonal as [A3] - so its
- *  "diagonal" is 3.
+ 
  * @author Ayar
  *
  */
@@ -39,7 +38,7 @@ public class HexCell implements Serializable {
 	protected List<IHexResident> residentList = new ArrayList<IHexResident>();
 	
 	protected ICellType type = null;
-	
+	protected CellRenderer renderer = null;
 	protected HexArray map = null;
 	
 	public HexCell(HexArray map) {
@@ -53,23 +52,36 @@ public class HexCell implements Serializable {
 	}
 	
 	/**
-	 * @return the x
+	 * @return the x coordinate of this cell within the map
 	 */
 	public int getX() {
 		return x;
 	}
 
 	/**
-	 * @return the y
+	 * @return the y coordinate of this cell within the map
 	 */
 	public int getY() {
 		return y;
 	}
 	
 	/**
-	 * @return
+	 * The "diagonal" is an indicator of what line of adjacent hexes this cell lies upon. 
+	 * These lines start at 0,0 (upper left hex) and run from SW to NE.
+	 * 
+	 *  For example [C2] is on the same diagonal as [A3] - so its
+	 *  "diagonal" is 2 (since the diagonal is zero-based).
+	 *  
+	 *   A   B   C   D   E
+	 *  [A1]	[C1]    [E1]
+	 *      [B1]    [D1]
+	 *  [A2]    [C2]    [E2]
+	 *      [B2]    [D2]
+	 *  [A3]    [C3]    [E3]
+	 * 
+	 * @return the diagonal on which this hex is located
 	 */
-	public int getDiagonal() {
+	protected int getDiagonal() {
 		return ((getX()+ 1)/2) + getY();
 	}
 	
@@ -172,7 +184,7 @@ public class HexCell implements Serializable {
 	 * Note - the actual hex map MAY NOT INCLUDE a hex at this point!
 	 * 
 	 * @param vector
-	 * @return
+	 * @return the adjacent cell (if any)
 	 */
 	public HexCell adjacent(EHexVector vector) {
 		HexCell point = null;
@@ -282,4 +294,20 @@ public class HexCell implements Serializable {
 	public List<IHexResident> getResidentList() {
 		return residentList;
 	}
+
+	/**
+	 * @return the renderer responsible for drawing this cell
+	 */
+	public CellRenderer getRenderer() {
+		return renderer;
+	}
+
+	/**
+	 * @param renderer the renderer to set
+	 */
+	protected void setRenderer(CellRenderer renderer) {
+		this.renderer = renderer;
+	}
+	
+	
 }

@@ -15,11 +15,13 @@ import org.apache.logging.log4j.Logger;
 import com.mele.games.hex.ui.HexArrayController;
 import com.mele.games.hex.ui.HexArrayRenderer;
 
+/**
+ * @author Al Mele
+ *
+ */
 public class TestFrame extends Frame {
 	private static final long serialVersionUID = 1L;
 	protected static Logger log = LogManager.getLogger(TestFrame.class);
-	// protected Graphics2D offScreenGraphicsCtx = null;
-	// protected Image offScreenImage = null;
 
 	public HexArrayController hexControl = new HexArrayController(this);
 	protected boolean initialized = false;
@@ -27,7 +29,7 @@ public class TestFrame extends Frame {
 	
 	protected void init() {
 		setVisible(true);
-		setTitle("Tap Herder");
+		setTitle("Test Hex Frame");
 		setSize(320, 320);
 		
 		HexArrayRenderer har = hexControl.getView();
@@ -40,12 +42,7 @@ public class TestFrame extends Frame {
 		      }
 		    });
 		
-		hexControl.init();
-		hexControl.setSnap(true);
-		
-		log.info("Min X: " + har.getMinX() + ", Min Y: " + har.getMinY() + ", Max X: " + har.getMaxX() + ", Max Y: " + har.getMaxY());
-		Insets border = this.getInsets();
-		this.setSize((int)har.getMaxX() + border.left + border.right, (int)har.getMaxY() + border.top + border.bottom);
+		hexControl.snap();
 		
 		initialized = true;
 	}
@@ -69,11 +66,11 @@ public class TestFrame extends Frame {
 		har.setOffsetY(border.top);
 		
 		Image hexCanvas = har.getCanvas();
-		Graphics2D offScreenGraphicsCtx = (Graphics2D) hexCanvas.getGraphics();
-		har.update(offScreenGraphicsCtx);
 		
 		// Draw the scene onto the screen
 		if (hexCanvas != null) {
+			Graphics2D offScreenGraphicsCtx = (Graphics2D) hexCanvas.getGraphics();
+			har.update(offScreenGraphicsCtx);			
 			g.drawImage(hexCanvas, border.left, border.top, this);
 		}
 	}

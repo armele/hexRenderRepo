@@ -1,4 +1,4 @@
-package com.mele.games.hex;
+package com.mele.games.hex.ui;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +9,8 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mele.games.hex.ICellType;
+import com.mele.games.hex.IHexResident;
 import com.mele.games.utils.GameException;
 
 /**

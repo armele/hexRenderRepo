@@ -22,6 +22,7 @@ import com.mele.games.hex.IHexEventListener;
 public class HexInputListener implements MouseListener, MouseMotionListener, ComponentListener {
 	protected static Logger log = LogManager.getLogger(HexInputListener.class);
 	
+	protected CellRenderer currentInputCell = null;
 	protected HexArrayController hexController = null;
 	protected HexInputState inputState = new HexInputState();
 	
@@ -37,9 +38,9 @@ public class HexInputListener implements MouseListener, MouseMotionListener, Com
 	protected void sendEvent(HexEventDetail eventDetail) {
 		IHexEventListener listener = hexController.getHexEventListener();	
 		eventDetail.setInputState(inputState);
-		listener.cellEvent(eventDetail);
+		boolean useDefault = listener.cellEvent(eventDetail);
 		
-		if (listener.keepDefaultBehavior()) {
+		if (useDefault) {
 			hexController.getHexDefaultListener().cellEvent(eventDetail);
 		}		
 	}
@@ -90,9 +91,7 @@ public class HexInputListener implements MouseListener, MouseMotionListener, Com
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// Clear all selections and hovering when the mouse leaves the window.
-		// hexController.clearSelection();	
-		hexController.setCurrentCell(null);
+		currentInputCell = null;
 	}
 
 	@Override
@@ -131,7 +130,7 @@ public class HexInputListener implements MouseListener, MouseMotionListener, Com
 
 		HexArrayRenderer hr = hexController.getView();
 		CellRenderer newCell = hr.getCellAtDisplayPoint(p);
-		CellRenderer oldCell = hexController.getCurrentCell();
+		CellRenderer oldCell = currentInputCell;
 		
 		if (newCell != null) {
 
@@ -139,7 +138,7 @@ public class HexInputListener implements MouseListener, MouseMotionListener, Com
 				cellchange = true;
 			}
 			
-			hexController.setCurrentCell(newCell);
+			currentInputCell = newCell;
 			
 			if (cellchange) {
 				HexEventDetail edOld = new HexEventDetail(oldCell);
