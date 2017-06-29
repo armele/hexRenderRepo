@@ -157,6 +157,21 @@ public class HexArrayController {
 	}	
 	
 	/**
+	 * @return a list of CellRenderer objects corresponding to selected cells.
+	 */
+	public List <CellRenderer> allCells() {
+		ArrayList<CellRenderer> all = new ArrayList<CellRenderer>();
+		
+		if (view != null && view.getVisualMap() != null) {
+			for (CellRenderer cr : view.getVisualMap().values()) {
+					all.add(cr);
+			}
+		}
+		
+		return all;
+	}		
+	
+	/**
 	 * Register a listener of your implementation which will receive all mouse and game events provided
 	 * by the hexRender library.  
 	 * 

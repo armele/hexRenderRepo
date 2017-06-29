@@ -27,15 +27,15 @@ public class HexEventDetail {
 		
 		switch (mouseButton) {
 		case MouseEvent.BUTTON1:
-			eventType = EHexEventType.MOUSE_LEFT;
+			eventType = EHexEventType.MOUSE_LEFTCLICK;
 			break;
 			
 		case MouseEvent.BUTTON2:
-			eventType = EHexEventType.MOUSE_RIGHT;
+			eventType = EHexEventType.MOUSE_RIGHTCLICK;
 			break;
 			
 		case MouseEvent.BUTTON3:
-			eventType = EHexEventType.MOUSE_CENTER;
+			eventType = EHexEventType.MOUSE_CENTERCLICK;
 			break;	
 		}
 		

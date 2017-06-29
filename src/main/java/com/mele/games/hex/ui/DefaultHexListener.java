@@ -33,8 +33,9 @@ public class DefaultHexListener implements IHexEventListener {
 			case MOUSE_EXITED:
 				location.setHovered(false);			
 				break;
+			
 				
-			case MOUSE_LEFT:
+			case MOUSE_LEFTCLICK:
 				// Toggle selection on left click.
 				location.setSelected(!location.isSelected());
 				break;
@@ -42,7 +43,15 @@ public class DefaultHexListener implements IHexEventListener {
 			default:
 				break;
 			}
-
+		}
+		
+		// When the mouse leaves the window, mark nothing as "hovered".
+		if (EHexEventType.MOUSE_WINEXIT.equals(eventDetail.getEventType())) {
+			if (hexController != null) {
+				for (CellRenderer cr : hexController.allCells()) {
+					cr.setHovered(false);
+				}
+			}
 		}
 	
 		// This class implements the default behavior; there is no further default behavior to be triggered.

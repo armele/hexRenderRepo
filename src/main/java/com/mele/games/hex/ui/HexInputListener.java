@@ -92,6 +92,9 @@ public class HexInputListener implements MouseListener, MouseMotionListener, Com
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		currentInputCell = null;
+		HexEventDetail eventDetail = new HexEventDetail(null);
+		eventDetail.setEventType(EHexEventType.MOUSE_WINEXIT);
+		sendEvent(eventDetail);		
 	}
 
 	@Override

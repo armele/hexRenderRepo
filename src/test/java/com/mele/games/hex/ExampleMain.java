@@ -8,12 +8,15 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mele.games.hex.ui.HexArrayController;
 import com.mele.games.hex.ui.HexArrayRenderer;
+import com.mele.games.hex.ui.HexEventDetail;
+
 
 public class ExampleMain extends Frame {
 	private static final long serialVersionUID = 1L;
@@ -39,7 +42,9 @@ public class ExampleMain extends Frame {
 		});
 
 		hexControl.snap();
-
+		TestEventListener evListener = new TestEventListener();
+		hexControl.registerHexEventListener(evListener);
+		
 		initialized = true;
 	}
 
@@ -73,11 +78,34 @@ public class ExampleMain extends Frame {
 		}
 	}
 
+	/**
+	 * Helper class - test listener.
+	 * 
+	 * @author Al Mele
+	 *
+	 */
+	class TestEventListener implements IHexEventListener {
+		protected ArrayList<HexEventDetail> detail = new ArrayList<HexEventDetail>();
+		protected boolean keepDefault = true;
+		
+		@Override
+		public boolean cellEvent(HexEventDetail eventDetail) {
+			detail.add(eventDetail);
+			log.info(eventDetail);
+			return true;
+		}
+		
+		public HexEventDetail getHexEventDetail(int index)  {
+			return detail.get(index);
+		}
+	}
+
 	public static void main(String args[]) {
 		ExampleMain tf = new ExampleMain();
 		tf.hexControl.size(5, 6);
 		tf.hexControl.setAutoscale(true);
 
+		
 		tf.display();
 
 		while (!tf.closed) {

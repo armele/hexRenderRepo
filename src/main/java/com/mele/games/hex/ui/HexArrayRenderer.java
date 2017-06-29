@@ -54,7 +54,7 @@ public class HexArrayRenderer {
 	 */
 	protected boolean autoscale = true; 
 	
-	protected Color selectionColor = Color.white;
+	protected Color selectionColor = Color.lightGray;
 	protected Color lineColor = Color.black;
 	
 	
@@ -171,11 +171,11 @@ public class HexArrayRenderer {
 	}
 	
 	/**
-	 * @param The point on the display window for which an interaction is being initiated.
+	 * @param The point (in screen coordinates, *not* HexMap coordinates) on the display window for which an interaction is being initiated.
 	 * 
 	 * As written, assumes no overlap of polygons in the display.
 	 * 
-	 * @return The HexCell containing that point.
+	 * @return The CellRenderer containing that point.
 	 */
 	public CellRenderer getCellAtDisplayPoint(Point point) {
 		/*
@@ -219,7 +219,9 @@ public class HexArrayRenderer {
 	}
 	
 	/**
-	 * @param g
+	 * Update the rendered image.
+	 * 
+	 * @param g the graphics object in which to draw
 	 */
 	public void update(Graphics g) {
 		
@@ -271,35 +273,36 @@ public class HexArrayRenderer {
 	}
 
 	/**
-	 * @param cellSize the cellSize to set
+	 * @param cellSize the size to be used when drawing the map cells.  Note that autoscaling
+	 * will cause this to be automatically determined, and will override the setting here.
 	 */
 	public void setCellSize(int cellSize) {
 		this.cellSize = cellSize;
 	}
 
 	/**
-	 * @return the selectionColor
+	 * @return the color to highlight the border of a selected cell.  Default: Light Grey
 	 */
 	public Color getSelectionColor() {
 		return selectionColor;
 	}
 
 	/**
-	 * @param selectionColor the selectionColor to set
+	 * @param selectionColor the color to highlight the border of a selected cell.  Default: Light Grey
 	 */
 	public void setSelectionColor(Color selectionColor) {
 		this.selectionColor = selectionColor;
 	}
 
 	/**
-	 * @return the lineColor
+	 * @return the color of the line used to draw cell borders.  Default: Black
 	 */
 	public Color getLineColor() {
 		return lineColor;
 	}
 
 	/**
-	 * @param lineColor the lineColor to set
+	 * @param lineColor the color of the line used to draw cell borders.  Default: Black
 	 */
 	public void setLineColor(Color lineColor) {
 		this.lineColor = lineColor;
@@ -396,9 +399,9 @@ public class HexArrayRenderer {
 	}
 
 	/**
-	 * @return the visualMap
+	 * @return a map from the drawn polygon representing a cell to the CellRenderer which drew it.
 	 */
-	public Map<Polygon, CellRenderer> getVisualMap() {
+	protected Map<Polygon, CellRenderer> getVisualMap() {
 		return visualMap;
 	}
 

@@ -1,5 +1,5 @@
 #hexRender
-The hexRender project is intended to provide basic support for 2D games that are implemented on a hex-based game board.
+The hexRender project is intended to provide basic support for 2D games that are implemented on a hex-based game board.  This readme file provides a basic overview of the functionality, and describes a few key objects you will interact with.  For complete documentation, refer to the javadocs.
 
 ##Getting Started
 Interactions with the hex map library are facilitated through `HexArrayController`.  Instantiate your HexArrayController by passing in the parent window object in which your hex array map will be painted.
@@ -109,28 +109,31 @@ public class ExampleMain extends Frame {
 
 ```
 
-###HexArrayController
+### HexArrayController
 The HexArrayController is responsible for synchronizing the state between the Model (`HexArray`) and View (`HexArrayRenderer`), as well as providing some basic high level settings.
 
 Some important methods you will interact with (see the javadocs for full documentation):
-*getCellAt() - Returns the <code>CellRenderer</code> of the cell at the given X,Y coordinate.
-*registerHexEventListener() - Used to register a class which will receive and process events thrown from the hex library.
-*snap() - Make the borders of the parent window fit the area into which the hex map has been drawn.
-*addResident() - Add a resident to the cell at the specified coordinate. 
+* allCells() - Return all cells in the map, in a list. 
+* getCellAt() - Returns the <code>CellRenderer</code> of the cell at the given X,Y coordinate.
+* registerHexEventListener() - Used to register a class which will receive and process events thrown from the hex library.
+* snap() - Make the borders of the parent window fit the area into which the hex map has been drawn.
+* addResident() - Add a resident to the cell at the specified coordinate. 
 
-###HexArray
+### HexArray
 This class represents the map of cells.  It is the "model" which the controller synchronizes to the view.  Typically there would be no need to interact with this class directly, as you can interact with the cells using <code>getCellAt()</code> from the controller.  However, there are some helpful functions to be aware of:
-*globalResidentList() - This will return a list of all residents of any cells in the map.
-*pathFromCell() - given a cell and a direction, return the list of all cells in that direction (with the source cell as the starting point)
+* globalResidentList() - This will return a list of all residents of any cells in the map.
+* pathFromCell() - given a cell and a direction, return the list of all cells in that direction (with the source cell as the starting point)
 
-###HexArrayRenderer
+### HexArrayRenderer
 This class is responsible for rendering the map.
-getCanvas() - obtains the image into which the renderer draws graphics.  Refer to the example class above for usage.
+* getCanvas() - obtains the image into which the renderer draws graphics.  Refer to the example class above for usage.
+* setLineColor() - the color of the line used to draw cell borders.
+* setSelectionColor() - the color to highlight the border of a selected cell
 
-###HexCell
+### HexCell
 
 
-###Implementing a Listener
+### Implementing a Listener
 
 
 
