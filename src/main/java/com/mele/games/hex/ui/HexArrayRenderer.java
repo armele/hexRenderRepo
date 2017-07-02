@@ -116,6 +116,8 @@ public class HexArrayRenderer {
 			return;
 		}
 		
+		log.info("Initializing the game map...");
+		
 		if (visualMap != null) {
 			visualMap.clear();
 		}
@@ -137,8 +139,15 @@ public class HexArrayRenderer {
 		for (HexCell point : hexmap) {
 			if (point != null) {
 				Polygon p = new Polygon();
-
-				visualMap.put(p, new CellRenderer(this, point));
+				CellRenderer cRend = null;
+				
+				if (point.getRenderer() == null) {
+					cRend = new CellRenderer(this, point);
+				} else {
+					cRend = point.getRenderer();
+				}
+				
+				visualMap.put(p, cRend);  
 				
 				double columnSpacing = point.getX() * (cellSize * Math.cos(2 * Math.PI / HEX) + cellSize);
 				double rowSpacing = (cellSize * Math.sin(2 * Math.PI / HEX)) * (2 * (point.getY() + 1) - ((point.getX() + 1) % 2));

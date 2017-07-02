@@ -2,6 +2,8 @@ package com.mele.games.hex.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -31,6 +33,7 @@ public class CellRenderer {
 	protected boolean selected = false;
 	protected boolean hovered = false;
 	protected boolean rendered = false;
+	protected Font labelFont = null;
 	
 	// TODO: Allow client-created renderers which can override this functionality.
 	
@@ -78,7 +81,7 @@ public class CellRenderer {
 			// Cell backgrounds are painted on the middle pass only.
 			if (ERenderPass.BOTTOM.equals(pass)) {
 				
-				Color color = cell.getBackgroundColor();
+				Color color = getBackgroundColor();
 				
 				if (color != null) {
 					g.setColor(color);	
@@ -89,11 +92,30 @@ public class CellRenderer {
 					g.fillPolygon(p);
 				}
 				
-				IHexRenderable bkgImg = cell.getBackgroundImage();
+				IHexRenderable bkgImg = getBackgroundImage();
 				if (bkgImg != null) {
 					renderItem( pass, cell, p, g,(IHexRenderable) bkgImg);
 				}					
 			}	
+			
+			if (ERenderPass.MIDDLE.equals(pass)) {
+				
+				// Handle drawing cell labels
+				if (cell != null && cell.getLabel() != null) {
+					Font saveFont = g.getFont();
+					
+					if (getLabelFont() != null) {
+						g.setFont(getLabelFont());
+					}
+					
+					FontMetrics metrics = g.getFontMetrics(g.getFont());
+					int txht = metrics.getHeight();
+					int txwd = metrics.stringWidth(cell.getLabel());
+					g.drawString(cell.getLabel(), (int)(p.getBounds().getCenterX() - (txwd / 2.0)), (int)(p.getBounds().getCenterY() + (txht / 2.0)));
+					
+					g.setFont(saveFont);
+				}
+			}
 			
 			if (ERenderPass.TOP.equals(pass)) {
 				if (isSelected()) {
@@ -238,5 +260,43 @@ public class CellRenderer {
 	public String toString() {
 		return "CellRenderer [cell=" + cell + ", selected=" + selected + ", hovered=" + hovered + "]";
 	}	
+
+	
+	/**
+	 * @return the background image to be displayed in this cell.
+	 */
+	protected IHexRenderable getBackgroundImage() {
+		IHexRenderable backgroundImage = null;
+		if (cell != null && cell.getType() != null) {
+			backgroundImage = cell.getType().getBackgroundImage();
+		}
+		return backgroundImage;
+	}
+
+	/**
+	 * @return the background color used for painting this cell
+	 */
+	protected Color getBackgroundColor() {
+		Color bkColor = null;
+		
+		if (cell != null && cell.getType() != null) {
+			bkColor = cell.getType().getBackgroundColor();
+		}
+		return bkColor;
+	}
+
+	/**
+	 * @return the labelFont
+	 */
+	public Font getLabelFont() {
+		return labelFont;
+	}
+
+	/**
+	 * @param labelFont the labelFont to set
+	 */
+	public void setLabelFont(Font labelFont) {
+		this.labelFont = labelFont;
+	}
 	
 }

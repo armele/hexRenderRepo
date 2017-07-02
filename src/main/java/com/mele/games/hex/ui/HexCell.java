@@ -1,6 +1,5 @@
 package com.mele.games.hex.ui;
 
-import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +39,21 @@ public class HexCell implements Serializable {
 	protected ICellType type = null;
 	protected CellRenderer renderer = null;
 	protected HexArray map = null;
+	protected String label = null;
 	
-	public HexCell(HexArray map) {
+	/**
+	 * @param map
+	 */
+	protected HexCell(HexArray map) {
 		this.map = map;
 	}
 	
-	public HexCell(int x, int y, HexArray map) {
+	/**
+	 * @param x
+	 * @param y
+	 * @param map
+	 */
+	protected HexCell(int x, int y, HexArray map) {
 		this.x = x;
 		this.y = y;
 		this.map = map;
@@ -262,28 +270,8 @@ public class HexCell implements Serializable {
 	}
 
 	/**
-	 * @return the backgroundImage
-	 */
-	public IHexRenderable getBackgroundImage() {
-		IHexRenderable backgroundImage = null;
-		if (type != null) {
-			backgroundImage = type.getBackgroundImage();
-		}
-		return backgroundImage;
-	}
-
-	/**
-	 * @return the backgroundColor
-	 */
-	public Color getBackgroundColor() {
-		Color bkColor = null;
-		if (type != null) {
-			bkColor = type.getBackgroundColor();
-		}
-		return bkColor;
-	}
-
-	/**
+	 * Add a new resident (game piece) at this location on the game board.
+	 * 
 	 * @param newResident
 	 */
 	public void addResident(IHexResident newResident) {
@@ -303,10 +291,24 @@ public class HexCell implements Serializable {
 	}
 
 	/**
-	 * @param renderer the renderer to set
+	 * @param renderer the renderer responsible for drawing this cell
 	 */
 	protected void setRenderer(CellRenderer renderer) {
 		this.renderer = renderer;
+	}
+
+	/**
+	 * @return the label
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * @param label the label to set
+	 */
+	public void setLabel(String label) {
+		this.label = label;
 	}
 	
 	

@@ -1,6 +1,7 @@
 package com.mele.games.hex;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -100,11 +101,19 @@ public class ExampleMain extends Frame {
 		}
 	}
 
+	/**
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		ExampleMain tf = new ExampleMain();
 		tf.hexControl.size(5, 6);
 		tf.hexControl.setAutoscale(true);
-
+		tf.hexControl.registerHexEventListener(new TestEventListener());
+		
+		Font font = new Font("Serif", Font.BOLD, 12);
+		tf.hexControl.getCellAt(1, 1).setLabelFont(font);
+		tf.hexControl.getCellAt(1, 1).getCell().setLabel("TEST");
+		tf.hexControl.getCellAt(1, 1).getCell().setType(new TestType());
 		
 		tf.display();
 
