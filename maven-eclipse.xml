@@ -2,7 +2,7 @@
   <target name="init"/>
   <target name="copy-resources" depends="init">
     <copy todir="target/classes/com/mele/hexRender" filtering="false">
-      <fileset dir="src/main/resources" includes="*.xml|*.gif|*.mp3|*.png|*.map|*.wav" excludes="**/*.java|**/*.jbf|**/*.java"/>
+      <fileset dir="src/main/resources" includes="*.xml|*.gif|*.mp3|*.png|*.map|*.wav|log4j2-test.xml" excludes="**/*.java|**/*.jbf"/>
     </copy>
   </target>
 </project>

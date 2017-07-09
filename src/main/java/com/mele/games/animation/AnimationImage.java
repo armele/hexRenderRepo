@@ -98,4 +98,14 @@ public class AnimationImage {
 	public void setFrameVariation(int frames) {
 		this.framevariation = frames;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AnimationImage [imageName=" + imageName + ", image=" + image + ", fixedframes=" + fixedframes
+				+ ", framevariation=" + framevariation + "]";
+	}
+	
 }

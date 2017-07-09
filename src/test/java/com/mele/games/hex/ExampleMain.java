@@ -14,10 +14,33 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mele.games.animation.ERenderPass;
+import com.mele.games.animation.SpriteFactory;
+import com.mele.games.animation.SpriteFactoryDescriptor;
 import com.mele.games.hex.ui.HexArrayController;
 import com.mele.games.hex.ui.HexArrayRenderer;
 import com.mele.games.hex.ui.HexEventDetail;
 
+/**
+ * Helper class - test listener.
+ * 
+ * @author Al Mele
+ *
+ */
+class TestEventListener implements IHexEventListener {
+	protected ArrayList<HexEventDetail> detail = new ArrayList<HexEventDetail>();
+	protected boolean keepDefault = true;
+	
+	@Override
+	public boolean cellEvent(HexEventDetail eventDetail) {
+		detail.add(eventDetail);
+		return true;
+	}
+	
+	public HexEventDetail getHexEventDetail(int index)  {
+		return detail.get(index);
+	}
+}
 
 public class ExampleMain extends Frame {
 	private static final long serialVersionUID = 1L;
@@ -80,32 +103,16 @@ public class ExampleMain extends Frame {
 	}
 
 	/**
-	 * Helper class - test listener.
-	 * 
-	 * @author Al Mele
-	 *
-	 */
-	class TestEventListener implements IHexEventListener {
-		protected ArrayList<HexEventDetail> detail = new ArrayList<HexEventDetail>();
-		protected boolean keepDefault = true;
-		
-		@Override
-		public boolean cellEvent(HexEventDetail eventDetail) {
-			detail.add(eventDetail);
-			log.info(eventDetail);
-			return true;
-		}
-		
-		public HexEventDetail getHexEventDetail(int index)  {
-			return detail.get(index);
-		}
-	}
-
-	/**
 	 * @param args
 	 */
 	public static void main(String args[]) {
 		ExampleMain tf = new ExampleMain();
+		
+		SpriteFactoryDescriptor sd = new SpriteFactoryDescriptor();
+		sd.addImageFrames("/com/mele/hexrender/Boulder.png", 1, 0);
+		sd.setRenderPass(ERenderPass.BOTTOM);
+		SpriteFactory.registerSprite("BOULDER", sd);			
+		
 		tf.hexControl.size(5, 6);
 		tf.hexControl.setAutoscale(true);
 		tf.hexControl.registerHexEventListener(new TestEventListener());
@@ -114,6 +121,7 @@ public class ExampleMain extends Frame {
 		tf.hexControl.getCellAt(1, 1).setLabelFont(font);
 		tf.hexControl.getCellAt(1, 1).getCell().setLabel("TEST");
 		tf.hexControl.getCellAt(1, 1).getCell().setType(new TestType());
+		tf.hexControl.getCellAt(4, 4).getCell().setType(new TestType());
 		
 		tf.display();
 

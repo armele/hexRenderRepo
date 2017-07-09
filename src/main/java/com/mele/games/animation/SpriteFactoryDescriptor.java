@@ -98,5 +98,31 @@ public class SpriteFactoryDescriptor {
 		this.animationMethod = animationMethod;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuffer sbuff = new StringBuffer();
+		
+		sbuff.append("SpriteFactoryDescriptor [spriteClass=" + spriteClass);
+		sbuff.append(", transparency=" + transparency);
+		sbuff.append(", renderPass=" + renderPass);
+		sbuff.append(", animationMethod=" + animationMethod);
+		sbuff.append(", imageList={");
+		
+		for (AnimationImage ai : imageList) {
+			if (imageList.get(0).equals(ai)) {
+				sbuff.append(",");
+			}			
+			sbuff.append(ai.toString());
+		}
+		
+		sbuff.append("}");
+		sbuff.append("]");
+		
+		return sbuff.toString();
+	}
+
 	
 }

@@ -2,10 +2,11 @@ package com.mele.games.hex.ui;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.mele.games.hex.EHexVector;
-import com.mele.games.hex.ICellType;
 import com.mele.games.hex.IHexResident;
 
 /**
@@ -34,7 +35,8 @@ public class HexCell implements Serializable {
 	// How many hexes down (along the left border)
 	protected int y = 0;
 	
-	protected List<IHexResident> residentList = new ArrayList<IHexResident>();
+	protected HashMap<String, Object> properties = new HashMap<String, Object>();
+	protected Set<IHexResident> residents = new HashSet<IHexResident>();
 	
 	protected ICellType type = null;
 	protected CellRenderer renderer = null;
@@ -273,14 +275,25 @@ public class HexCell implements Serializable {
 	 * Add a new resident (game piece) at this location on the game board.
 	 * 
 	 * @param newResident
+	 * @return true if successfully added
 	 */
-	public void addResident(IHexResident newResident) {
+	public boolean addResident(IHexResident newResident) {
 		// rendered = false;
-		residentList.add(newResident);
+		return residents.add(newResident);
 	}
 	
-	public List<IHexResident> getResidentList() {
-		return residentList;
+
+	/**
+	 * Removes the specified resident (game piece) from this location on the game board.
+	 * 
+	 * @param newResident
+	 * @return true if successfully removed
+	 */
+	public boolean removeResident(IHexResident resident) {
+		return residents.remove(resident);
+	}	
+	public Set<IHexResident> getResidents() {
+		return residents;
 	}
 
 	/**
@@ -311,5 +324,50 @@ public class HexCell implements Serializable {
 		this.label = label;
 	}
 	
+	/**
+	 * Allows you to specify a property as a key/value pair.  This has no inherent use within the hex map structure,
+	 * but supports flexible extension of a HexCell for game content.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void addProperty(String key, Object value) {
+		properties.put(key, value);
+	}
 	
+	/**
+	 * Returns the given property of the HexCell
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public Object getProperty(String key) {
+		return properties.get(key);
+	}
+	
+	/**
+	 * @return the map of all properties set on this cell.
+	 */
+	public HashMap<String, Object> getProperties() {
+		return properties;
+	}
+	
+	/**
+	 * Using this cell as an origin point, return an array
+	 * of all the points in the map along a given vector,
+	 * starting with the closest cell first.
+	 * 
+	 * @param origin
+	 * @return
+	 */
+	public ArrayList<HexCell> pathFromCell(EHexVector vector) {
+		ArrayList<HexCell> vectorList = new ArrayList<HexCell>();
+		
+		for (HexCell nextCell = this.adjacent(vector); nextCell != null;) {
+			vectorList.add(nextCell);
+			nextCell = nextCell.adjacent(vector);
+		}
+		
+		return vectorList;
+	}	
 }

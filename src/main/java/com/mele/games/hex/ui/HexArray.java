@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mele.games.hex.EHexVector;
 import com.mele.games.hex.IHexResident;
 
 /**
@@ -68,7 +67,7 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 		
 		for (HexCell[] column : cellMap) {
 			for (HexCell cell : column) {
-				globalResidentList.addAll(cell.getResidentList());
+				globalResidentList.addAll(cell.getResidents());
 			}
 			
 		}
@@ -167,27 +166,6 @@ public class HexArray implements Iterable<HexCell>, Serializable {
 		}
 		
 		return columns;
-	}
-	
-	/**
-	 * Given an origin point and a vector, return an array
-	 * of all the points in the map on that vector,
-	 * starting with the closest cell first.
-	 * 
-	 * @param origin
-	 * @return
-	 */
-	public ArrayList<HexCell> pathFromCell(HexCell origin, EHexVector vector) {
-		ArrayList<HexCell> vectorList = new ArrayList<HexCell>();
-		
-		if (origin != null) {
-			for (HexCell nextCell = origin.adjacent(vector); nextCell != null;) {
-				vectorList.add(nextCell);
-				nextCell = nextCell.adjacent(vector);
-			}
-		}
-		
-		return vectorList;
 	}
 	
 	/**

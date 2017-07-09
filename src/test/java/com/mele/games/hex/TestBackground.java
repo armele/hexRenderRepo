@@ -1,18 +1,24 @@
 package com.mele.games.hex;
 
-import com.mele.games.animation.SpriteFactory;
-import com.mele.games.animation.SpriteFactoryDescriptor;
+import java.awt.Color;
+
+import com.mele.games.animation.ERenderPass;
+import com.mele.games.animation.SpriteAnimated;
+import com.mele.games.animation.SpriteFrame;
 import com.mele.games.hex.ui.IHexRenderable;
 
+@SpriteAnimated(spriteTag="BOULDER", 
+	frames = { @SpriteFrame(frameCount = 1, frameVariation = 0, imageName = "/com/mele/hexrender/Boulder.png") },
+	renderPass = ERenderPass.BOTTOM
+		)
 public class TestBackground implements IHexRenderable {
-
+	protected Color bkg = null;
+	
 	public TestBackground () {
-		SpriteFactoryDescriptor sd = new SpriteFactoryDescriptor();
-		sd.addImageFrames("/com/mele/hexrender/Boulder.png", 1, 0);
-		SpriteFactory.registerSprite(getSpriteTag(), sd);		
+	
 	}
 	
-	public String getSpriteTag() {
+	public String getSpriteTagX() {
 		return "BOULDER";
 	}
 
@@ -21,6 +27,16 @@ public class TestBackground implements IHexRenderable {
 	}
 
 	public void setProperty(String propname, Object propvalue) {
+	}
+
+	@Override
+	public Color getBackgroundColor() {
+		return bkg;
+	}
+
+	@Override
+	public void setBackgroundColor(Color backgroundColor) {
+		bkg = backgroundColor;
 	}
 
 }

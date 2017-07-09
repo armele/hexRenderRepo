@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Stroke;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,27 +78,36 @@ public class CellRenderer {
 		
 		if (cell != null) {	
 			
-			// Cell backgrounds are painted on the middle pass only.
+			// Background images and set background colors on the bottom bass
 			if (ERenderPass.BOTTOM.equals(pass)) {
-				
 				Color color = getBackgroundColor();
 				
 				if (color != null) {
 					g.setColor(color);	
-					g.fillPolygon(p);
 				} else {
-					Color transparent = new Color(255,255,255,255);
-					g.setColor(transparent);
-					g.fillPolygon(p);
+					g.setColor(Color.white);
 				}
+				g.fillPolygon(p);
 				
 				IHexRenderable bkgImg = getBackgroundImage();
 				if (bkgImg != null) {
-					renderItem( pass, cell, p, g,(IHexRenderable) bkgImg);
+					renderItem(pass, cell, p, g,(IHexRenderable) bkgImg);
 				}					
 			}	
 			
+			// Default color fills and labels on the middle pass
 			if (ERenderPass.MIDDLE.equals(pass)) {
+				
+				Color color = getBackgroundColor();
+				
+				if (color == null) {
+					IHexRenderable bkgImg = getBackgroundImage();
+					if (bkgImg == null || renderer.getSpriteMap().get(bkgImg) == null) {
+						g.setColor(Color.white);
+						g.fillPolygon(p);
+					}
+				}
+				
 				
 				// Handle drawing cell labels
 				if (cell != null && cell.getLabel() != null) {
@@ -117,6 +126,7 @@ public class CellRenderer {
 				}
 			}
 			
+			// Residents on the top pass
 			if (ERenderPass.TOP.equals(pass)) {
 				if (isSelected()) {
 					Graphics2D g2 = (Graphics2D)g;
@@ -138,7 +148,7 @@ public class CellRenderer {
 				
 			}
 			
-			List<IHexResident> residentList = cell.getResidentList();
+			Set<IHexResident> residentList = cell.getResidents();
 			if (residentList != null) {
 				for (IHexResident resident : residentList) {
 					if (resident instanceof IHexRenderable) {
@@ -167,6 +177,7 @@ public class CellRenderer {
 		if (spriteMap != null) {
 			Sprite sprite = spriteMap.get(renderItem);
 			
+			// TODO: Confirm need for property values.
 			if (IHexRenderable.PROPVAL_TRUE.equals(renderItem.getProperty(IHexRenderable.PROPKEY_NEWTYPE)) || sprite == null) {
 				sprite = SpriteFactory.letThereBeSprite(renderItem);
 				renderItem.setProperty(IHexRenderable.PROPKEY_NEWTYPE, IHexRenderable.PROPVAL_FALSE);  // Clear this flag once loaded.
@@ -175,9 +186,11 @@ public class CellRenderer {
 			
 			if (sprite != null) {
 				if (sprite.getDescriptor().getRenderPass().equals(pass)) {
-					sprite.render(p, g);	
+					sprite.render(p, g);				
 				}
-			}		
+			}
+		} else {
+			log.error("No sprites have been registered.");
 		}
 	}
 
@@ -268,7 +281,7 @@ public class CellRenderer {
 	protected IHexRenderable getBackgroundImage() {
 		IHexRenderable backgroundImage = null;
 		if (cell != null && cell.getType() != null) {
-			backgroundImage = cell.getType().getBackgroundImage();
+			backgroundImage = cell.getType();
 		}
 		return backgroundImage;
 	}

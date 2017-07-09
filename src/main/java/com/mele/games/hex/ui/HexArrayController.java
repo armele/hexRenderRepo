@@ -172,6 +172,19 @@ public class HexArrayController {
 	}		
 	
 	/**
+	 * @return a list of all residents in the map
+	 */
+	public List <IHexResident> allResidents() {
+		ArrayList<IHexResident> residents = new ArrayList<IHexResident>();
+		
+		for (CellRenderer cr : allCells()) {
+			residents.addAll(cr.getCell().getResidents());
+		}
+		
+		return residents;
+	}
+	
+	/**
 	 * Register a listener of your implementation which will receive all mouse and game events provided
 	 * by the hexRender library.  
 	 * 
@@ -253,4 +266,14 @@ public class HexArrayController {
 		}
 		return added;
 	}	
+	
+	/**
+	 * Given the name of a map on the class path as a resource, load the model with the map contents. 
+	 * 
+	 * @param mapname
+	 */
+	public void loadFromMap(String mapname) {
+		model = MapReader.loadMapTerrain(mapname);
+		init();
+	}
 }

@@ -116,8 +116,6 @@ public class HexArrayRenderer {
 			return;
 		}
 		
-		log.info("Initializing the game map...");
-		
 		if (visualMap != null) {
 			visualMap.clear();
 		}
@@ -174,7 +172,9 @@ public class HexArrayRenderer {
 			}
 		}
 		
-		canvas = parentWindow.createImage((int)maxX, (int)maxY);
+		if (maxX > 0 && maxY > 0) {
+			canvas = parentWindow.createImage((int)maxX, (int)maxY);
+		}
 		
 		initialized = true;
 	}

@@ -5,11 +5,12 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.reflections.Reflections;
 
-import com.mele.games.hex.ICellType;
 import com.mele.games.hex.IHexResident;
 import com.mele.games.utils.GameException;
 
@@ -35,20 +36,16 @@ import com.mele.games.utils.GameException;
  */
 public class MapReader {
 	protected static Logger log = LogManager.getLogger(MapReader.class);
-	protected HashMap<String, Class<?>> symbolType = new HashMap<String, Class<?>>();
-	protected HashMap<String, Class<?>> symbolResident = new HashMap<String, Class<?>>();
-	
-	public MapReader () {
-
-	}
-	
+	protected static HashMap<String, Class<?>> symbolType = new HashMap<String, Class<?>>();
+	protected static HashMap<String, Class<?>> symbolResident = new HashMap<String, Class<?>>();
+	protected static boolean autoregistered = false;
 	
 	/**
 	 * @param mapFile
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	protected HexArray initializeHexMap(File mapFile) throws FileNotFoundException {
+	protected static HexArray initializeHexMap(File mapFile) throws FileNotFoundException {
 		int columns = 0;
 		double rows = 0;
 		
@@ -81,7 +78,8 @@ public class MapReader {
 	 * @param symbol
 	 * @param type
 	 */
-	public void registerTypeSymbol(String symbol, Class<?> type) {
+	public static void registerTypeSymbol(String symbol, Class<?> type) {
+		log.info("Registering " + (symbol == null ? "null" : symbol.toString()) + " to " + (type == null ? "null" : type.getName()));
 		symbolType.put(symbol, type);
 	}
 	
@@ -89,7 +87,8 @@ public class MapReader {
 	 * @param symbol
 	 * @param resident
 	 */
-	public void registerResidentSymbol(String symbol, Class<?> resident) {
+	public static void registerResidentSymbol(String symbol, Class<?> resident) {
+		log.info("Registering " + (symbol == null ? "null" : symbol.toString()) + " to " + (resident == null ? "null" : resident.getName()));		
 		symbolResident.put(symbol, resident);
 	}	
 	
@@ -97,7 +96,7 @@ public class MapReader {
 	 * @param cell
 	 * @param residentSymbol
 	 */
-	protected void makeResident(HexCell cell, String residentSymbol) {
+	protected static void makeResident(HexCell cell, String residentSymbol) {
 		try {
 			Class<?> resClass = symbolResident.get(residentSymbol);
 			if (resClass != null) {
@@ -125,13 +124,14 @@ public class MapReader {
 	 * @param cell
 	 * @param residentSymbol
 	 */
-	protected void makeType(HexCell cell, String typeSymbol) {
+	protected static void makeType(HexCell cell, String typeSymbol) {
 		try {
 			Class<?> resClass = symbolType.get(typeSymbol);
 			if (resClass != null) {
 				if (ICellType.class.isAssignableFrom(resClass)) {
 					ICellType type = (ICellType)resClass.newInstance();
 					cell.setType(type);
+					log.info("Setting cell type for " + cell + ": " + type);
 				} else {
 					String msg = "Cannot assign type for symbol '" + typeSymbol + "'.  Class is not assignable from ICellType: " + resClass;
 					log.error(msg);
@@ -148,6 +148,42 @@ public class MapReader {
 			throw new GameException("Could not access class for type symbol " + typeSymbol, e);
 		}		
 	}	
+	
+	/**
+	 * Responsible for examining the classpath for any objects annotated as being CellTypeMetadata, 
+	 * or ResidentMetadata
+	 * 
+	 */
+	protected static void autoregister() {
+		log.debug("Autoregistering Cell Types and Residents...");
+		Reflections reflections = new Reflections("");    
+		Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CellTypeMetadata.class);
+		
+		for (Class<?> type : classes) {
+			CellTypeMetadata cellType = type.getAnnotation(CellTypeMetadata.class);
+			
+			if (ICellType.class.isAssignableFrom(type)) {
+				registerTypeSymbol(cellType.symbol(), type);	
+			} else {
+				throw new GameException("A class which does not implement ICellType has been annotated with CellTypeMetadata: " + type.getName());
+			}
+		}		
+		
+		classes = reflections.getTypesAnnotatedWith(ResidentMetadata.class);
+		
+		for (Class<?> type : classes) {
+			ResidentMetadata cellType = type.getAnnotation(ResidentMetadata.class);
+			
+			if (IHexResident.class.isAssignableFrom(type)) {
+				registerResidentSymbol(cellType.symbol(), type);	
+			} else {
+				throw new GameException("A class which does not implement IHexResident has been annotated with ResidentMetadata: " + type.getName());
+			}
+		}		
+		
+		autoregistered = true;
+	}	
+	
 	/**
 	 * Reads an ASCII file map and initializes the game board (including the underlying hex array) based on it.
 	 *  
@@ -155,9 +191,13 @@ public class MapReader {
 	 * @param hexMap
 	 * @param terrainMapName
 	 */
-	public HexArray loadMapTerrain(String terrainMapName) {
-		URL mapResource = this.getClass().getClassLoader().getResource(terrainMapName);
+	public static HexArray loadMapTerrain(String terrainMapName) {
+		URL mapResource = MapReader.class.getClassLoader().getResource(terrainMapName);
 		HexArray hexMap = null;
+		
+		if (!autoregistered) {
+			autoregister();
+		}
 		
 		if (mapResource != null) {
 			File mapFile = new File(mapResource.getFile());
