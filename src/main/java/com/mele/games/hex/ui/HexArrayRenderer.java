@@ -1,11 +1,15 @@
 package com.mele.games.hex.ui;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Window;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,14 +43,14 @@ public class HexArrayRenderer {
 	
 	protected Map<Polygon, CellRenderer> visualMap = null;
 	protected int cellSize = 25; 
-	
-	// TODO: Support "Mega Hex" shape (where the collective hexes themselves form a larger hex shape)
 
 	protected double maxX = 0;
 	protected double maxY = 0;
 	protected double minX = 0;
 	protected double minY = 0;	
 	protected boolean initialized = false;
+	protected Rectangle labelLocation = null;
+	protected ArrayList<String> labels = new ArrayList<String>();
 	
 	/**
 	 * When autoscale is "true", the cell size is derived from the window space.
@@ -228,6 +232,50 @@ public class HexArrayRenderer {
 	}
 	
 	/**
+	 * If labels are set, paint them onto the drawing area
+	 * 
+	 * TODO: Allow external specification of colors and fonts
+	 * 
+	 * @param g
+	 */
+	protected void drawLabels(Graphics g) {
+		Rectangle loc = labelLocation;
+		if (loc == null) {
+			loc = new Rectangle(0,0, (int)getMaxX()-1, 20);
+		}
+		Font saveFont = g.getFont();
+		Color backup = g.getColor();
+		Color bkg = new Color(124, 124, 124, 124);
+		
+		FontMetrics metrics = g.getFontMetrics(g.getFont());
+		int txht = metrics.getHeight();
+		
+		int segmentWidth = (int)loc.getWidth() / labels.size();
+		int segment = 0;
+		
+		g.setColor(bkg);
+		g.fillRect((int)loc.getX(), (int)loc.getY(), (int)loc.getWidth(), (int)loc.getHeight());
+		g.setColor(Color.black);
+		g.drawRect((int)loc.getX(), (int)loc.getY(), (int)loc.getWidth(), (int)loc.getHeight());
+		
+		for (String str : labels) {
+			if (str != null) {
+				Rectangle thisLabelSpot = new Rectangle((int)loc.getX() + (segmentWidth * segment), 
+														(int)loc.getY(), 
+														segmentWidth, 
+														(int)loc.getHeight());
+				int txwd = metrics.stringWidth(str);
+				g.drawString(str, (int)(thisLabelSpot.getBounds().getCenterX() - (txwd / 2.0)), 
+							      (int)(thisLabelSpot.getBounds().getCenterY() + (txht / 2.0)));
+				segment++;
+			}
+		}
+		
+		g.setFont(saveFont);	
+		g.setColor(backup);
+	}
+	
+	/**
 	 * Update the rendered image.
 	 * 
 	 * @param g the graphics object in which to draw
@@ -249,6 +297,11 @@ public class HexArrayRenderer {
 			drawHexArray(ERenderPass.BOTTOM, g);
 			drawHexArray(ERenderPass.MIDDLE, g);
 			drawHexArray(ERenderPass.TOP, g);
+			
+			// Draw labels
+			if (labels.size() > 0) {
+				drawLabels(g);
+			}
 			
 			g.setColor(backup);
 		}
@@ -420,7 +473,44 @@ public class HexArrayRenderer {
 	protected void setVisualMap(Map<Polygon, CellRenderer> visualMap) {
 		this.visualMap = visualMap;
 	}
+
+	/**
+	 * @return the labels
+	 */
+	public String getLabel(int labelIndex) {
+		return labels.get(labelIndex);
+	}
+
+	/**
+	 * @param labels the labels to set
+	 */
+	public void addLabel(String label) {
+		labels.add(label);
+	}
 	
+	/**
+	 * @param labelIndex
+	 * @param label
+	 */
+	public void setLabel(int labelIndex, String label) {
+		if (labels.size() >= labelIndex + 1) {
+			labels.set(labelIndex, label);
+		} else {
+			for (int i = labels.size(); i < labelIndex + 1; i++) {
+				labels.add(null);
+			}
+			
+			labels.set(labelIndex, label);
+		}
+	}
 	
-	
+	/**
+	 * @param labelIndex
+	 * @param label
+	 */
+	public void setLabel(int labelIndex, int label) {
+		Integer lblInt = new Integer(label);
+		setLabel(labelIndex, lblInt.toString());
+	}
+
 }

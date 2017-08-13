@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class SpriteFactoryDescriptor {
 	protected String spriteClass;
 	protected ArrayList<AnimationImage> imageList = new ArrayList<AnimationImage>();
-	//protected Properties props = new Properties();
+
 	protected int transparency = -65281; // Default to magenta
 	protected ERenderPass renderPass = ERenderPass.MIDDLE;
 	protected AnimationMethod animationMethod = AnimationMethod.CYCLE; 
@@ -65,16 +65,6 @@ public class SpriteFactoryDescriptor {
 	public void setTransparency(int transparency) {
 		this.transparency = transparency;
 	}
-
-	/*
-	public Properties getProperties() {
-		return props;
-	}
-
-	public void setProperties(Properties props) {
-		this.props = props;
-	}
-	*/
 	
 	public ERenderPass getRenderPass() {
 		return renderPass;

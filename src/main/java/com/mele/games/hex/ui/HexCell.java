@@ -278,7 +278,9 @@ public class HexCell implements Serializable {
 	 * @return true if successfully added
 	 */
 	public boolean addResident(IHexResident newResident) {
-		// rendered = false;
+		if (newResident != null) {
+			newResident.setCell(this);
+		}
 		return residents.add(newResident);
 	}
 	
@@ -290,6 +292,11 @@ public class HexCell implements Serializable {
 	 * @return true if successfully removed
 	 */
 	public boolean removeResident(IHexResident resident) {
+		// If the resident cell is set, but not to this cell, don't clear the cell
+		// on the resident (because perhaps the add to the new cell was done before the remove from this one.
+		if (resident != null && resident.getCell() != null && resident.getCell().equals(this)) {
+			resident.setCell(null);
+		}		
 		return residents.remove(resident);
 	}	
 	public Set<IHexResident> getResidents() {

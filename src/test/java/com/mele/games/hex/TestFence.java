@@ -5,10 +5,12 @@ import java.awt.Color;
 import com.mele.games.animation.SpriteFactory;
 import com.mele.games.animation.SpriteFactoryDescriptor;
 import com.mele.games.hex.IHexResident;
+import com.mele.games.hex.ui.HexCell;
 import com.mele.games.hex.ui.IHexRenderable;
 
 public class TestFence implements IHexRenderable, IHexResident {
-
+	protected HexCell currentCell = null;
+	
 	public TestFence() {
 		SpriteFactoryDescriptor sd = new SpriteFactoryDescriptor();
 		sd.addImageFrames("/com/mele/hexrender/Fence.png", 1, 0);
@@ -39,6 +41,18 @@ public class TestFence implements IHexRenderable, IHexResident {
 	public void setBackgroundColor(Color backgroundColor) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public HexCell getCell() {
+		return currentCell;
+	}
+
+
+	@Override
+	public void setCell(HexCell cell) {
+		currentCell = cell;		
 	}
 
 }
